@@ -94,4 +94,3 @@ if __name__ == "__main__":
             interval = 0
         _ctr= _ctr + 2
         iter1 = iter1 + 1
-    print(result_vector)

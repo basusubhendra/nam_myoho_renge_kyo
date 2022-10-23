@@ -1,7 +1,18 @@
 #!/usr/bin/python3
 import sys
+from mpmath import *
+from pi import pi
+from e import e
 MAGIC=18
 partition_sizes = [ 10, 8 ]
+
+def get_zero_digit(iter1, digit):
+    mp.prec=64
+    mp.dps=64
+    zero = str(zetazero(iter1).imag)
+    idx = zero.index(".")
+    zero = zero[idx - 2:]
+    return zero[digit]
 
 def _partition_(n):
     ctr = 0
@@ -42,22 +53,18 @@ if __name__ == "__main__":
     for partition in partitions:
         total_l = total_l + len(partition)
     iter1 =0
+    interval = 0
     while iter1 < n_iter:
-        result_set = []
+        result = ""
         ctr = _ctr + 2
-        n_partition = ""
-        run_length = 0
-        while run_length < total_l:
-            ss = str(ctr)
-            n_partition = n_partition + ss
-            run_length = run_length + len(ss)
-            if run_length > total_l:
-                n_partition = n_partition[:total_l]
-                break
-            elif run_length == total_l:
-                break
-            ctr = ctr + 1
-        r_partition = n_partition[::-1]
+        f=open("./pi.txt","r")
+        f.seek(ctr)
+        g=open("./e.txt","r")
+        g.seek(ctr)
+        n_partition = str(f.read(total_l))
+        r_partition = str(g.read(total_l))
+        f.close()
+        g.close()
         counter = 0
         prev_idx = 0
         for partition in partitions:
@@ -72,9 +79,19 @@ if __name__ == "__main__":
             prev_idx = prev_idx + idx
             n_hits1 = coverage(set1, partition)
             n_hits2 = coverage(set2, partition)
-            if n_hits1 == n_hits2 and n_hits1 > 0:
-                result_set.append(counter + 1)
+            if len(result) == 0 and n_hits1 == n_hits2 and n_hits1 > 0:
+                    result = get_zero_digit(iter1 + 1, counter)
             counter = counter + 1
-        print(iter1 + 1, result_set)
+        if len(result) == 0 or result == '0':
+            pass
+        elif result != '.':
+            interval = interval + 1
+        elif result == '.':
+            output_file=str(sys.argv[3])
+            h=open(output_file,"a")
+            h.write(str(interval))
+            h.close()
+            interval = 0
         _ctr= _ctr + 2
         iter1 = iter1 + 1
+    print(result_vector)
