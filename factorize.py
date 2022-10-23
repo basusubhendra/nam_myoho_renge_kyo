@@ -39,7 +39,40 @@ def coverage(set1, set2):
             nhits = nhits + 1
             m = m - 1
     return nhits
-    
+
+def analyze_helper1(posits):
+    prev_pos = -1
+    count = 0
+    snippet = []
+    for x in posits:
+        if prev_pos > -1 and prev_pos == x - 1:
+            snippet.append(str(bin(count)[2:][:-1]))
+            prev_pos = x
+            count = 1
+            continue
+        prev_pos = x
+        count = count + 1
+    if count > 0:
+        snippet.append(str(bin(count)[2:]))
+    return snippet
+
+
+def analyze_helper2(_pp_, ee):
+    counter = 0
+    posits = []
+    for x in list(zip(_pp_, ee)):
+        if x[0] == x[1]:
+            posits.append(counter + 1)
+        counter = counter + 1
+    f1 = analyze_helper1(posits)
+    return f1
+
+def analyze(_pp_, posits, index):
+    f1 = analyze_helper1(posits)
+    ee = e[:index][::-1]
+    f2 = analyze_helper2(_pp_, ee)
+    return "".join(f1), "".join(f2)
+
 if __name__ == "__main__":
     num = str(sys.argv[1])
     num = num.lstrip().rstrip()
@@ -54,6 +87,10 @@ if __name__ == "__main__":
         total_l = total_l + len(partition)
     iter1 =0
     interval = 0
+    index = 0
+    posits = []
+    factor_higher_front_end = []
+    factor_higher_rear_end = []
     while iter1 < n_iter:
         result = ""
         ctr = _ctr + 2
@@ -89,8 +126,19 @@ if __name__ == "__main__":
         elif result == '.':
             output_file=str(sys.argv[3])
             h=open(output_file,"a")
+            pp = pi[index]
+            _pp_ = _pp_ + str(interval)
+            if int(pp) == interval and interval == 0:
+                posits.append(counter + 1)
+                f1, f2 = analyze(_pp_, posits, index + 1)
+                posits = []
+                _pp_ = ""
+                index = 0
+            elif int(pp) == interval and interval > 0:
+                posits.append(counter + 1)
             h.write(str(interval))
             h.close()
             interval = 0
+            index = 0
         _ctr= _ctr + 2
         iter1 = iter1 + 1
