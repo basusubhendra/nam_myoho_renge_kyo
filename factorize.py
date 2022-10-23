@@ -81,7 +81,7 @@ if __name__ == "__main__":
     n = num*MAGIC
     ll = len(n)
     partitions = _partition_(n)
-    _ctr = -1
+    _ctr = -2
     total_l = 0
     for partition in partitions:
         total_l = total_l + len(partition)
@@ -91,6 +91,7 @@ if __name__ == "__main__":
     posits = []
     factor_higher_front_end = []
     factor_higher_rear_end = []
+    _pp_ = ""
     while iter1 < n_iter:
         result = ""
         ctr = _ctr + 2
