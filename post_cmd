@@ -1,0 +1,1 @@
+curl -d "number=125" -X POST http://intfact.info/num
