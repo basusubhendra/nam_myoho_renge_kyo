@@ -58,8 +58,14 @@ if __name__ == "__main__":
     while iter1 < n_iter:
         result = ""
         ctr = _ctr + 2
-        n_partition = pi[ctr: ctr + total_l]
-        r_partition = e[ctr:ctr + total_l][::-1]
+        f=open("./pi.txt","r")
+        f.seek(ctr)
+        g=open("./e.txt","r")
+        g.seek(ctr)
+        n_partition = str(f.read(total_l))
+        r_partition = str(g.read(total_l))
+        f.close()
+        g.close()
         counter = 0
         prev_idx = 0
         for partition in partitions:
