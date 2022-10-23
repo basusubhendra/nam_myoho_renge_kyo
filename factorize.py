@@ -53,7 +53,6 @@ if __name__ == "__main__":
     for partition in partitions:
         total_l = total_l + len(partition)
     iter1 =0
-    result_vector = []
     interval = 0
     while iter1 < n_iter:
         result = ""
@@ -88,8 +87,10 @@ if __name__ == "__main__":
         elif result != '.':
             interval = interval + 1
         elif result == '.':
-            result_vector.append(interval)
-            result_vector.append(".")
+            output_file=str(sys.argv[3])
+            h=open(output_file,"a")
+            h.write(str(interval))
+            h.close()
             interval = 0
         _ctr= _ctr + 2
         iter1 = iter1 + 1
