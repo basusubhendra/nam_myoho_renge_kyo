@@ -1,1 +1,1 @@
-g++ -o ./factorize _factorize_.cpp -lpthread -lgmp `getconf LFS_CFLAGS` -std=c++11 
+g++ -Ofast -o ./factorize _factorize_.cpp -lpthread -lgmp `getconf LFS_CFLAGS` -std=c++11 
