@@ -92,8 +92,9 @@ bool factorize(char* num, char* rnum, const char* pp, int pk, int repeat, int t)
 	} else {
 		_num_ = rnum;
 	}
+	unsigned long long int l = strlen(_num_);
 	for ( int i = pk; i < pk + repeat; ++i) {
-		if (ss[i] == _num_[i]) {
+		if (ss[i] == _num_[i % l]) {
 			free(ss);
 			return true;
 		}
