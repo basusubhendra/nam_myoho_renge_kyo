@@ -112,9 +112,16 @@ int main(int argc, char* argv[]) {
 	int t = 0;
 	int repeat_vector[4] = { 1, 3, 2, 1 };
 	unsigned long long int counter = 0;
+	char* _num_ = strdup(num);
 	while (1) {
 		unsigned long long int l = strlen(num);
 		num = num + (MAGIC % l);
+		l = strlen(num);
+		if (l == 0) {
+			cout << _num_ << " is a prime. " << endl;
+			free(_num_);
+			break;
+		}
 		rnum = strrev(num);
 		for (int i = 0; i < 4; ++i) {
 			char pp[3], ee[3];
