@@ -4,11 +4,16 @@
 #include <string.h>
 #include <iostream>
 #include <gmp.h>
+/*
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+*/
 using namespace std;
 using namespace boost;
 #define MAGIC 18
 unsigned long long int offset = 0;
-
+char* num = 0;
 struct arg {
 	char* num;
 	int t;
@@ -80,12 +85,11 @@ char* _int_(std::string x) {
 }
 
 void* factorize(void* _arg_) {
-	const int state_matrix[MAGIC] = { 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0 };
+	const char state_matrix[MAGIC] = { '1', '1', '1', '1', '0', '0', '1', '1', '1', '0', '0', '1', '1', '0', '0', '1', '0', '0' };
 	struct arg* arg1 = (struct arg*) _arg_;
-	char* num = arg1->num;
 	int param = arg1->t;
 	unsigned long long int offset = arg1->offset;
-	std::string ss = "";
+	char* return_string = (char*) calloc(MAGIC + 1, sizeof(char));
 	FILE* f = 0;
 	if (param == 0) {
 		f = fopen64("./pi.txt","r");
@@ -93,33 +97,53 @@ void* factorize(void* _arg_) {
 		f = fopen64("./e.txt","r");
 	}
 	fseek(f, offset, SEEK_SET);
+	unsigned long l = strlen(num);
 	for (int i = 0; i < MAGIC; ++i) {
 		char pp = 0;
 		fscanf(f, "%c", &pp);
-		if (pp == num[i]) {
-			ss += boost::lexical_cast<std::string>(state_matrix[i]);
+		if (pp == num[(i + offset) % l]) {
+			return_string[i] = state_matrix[i];
+		} else {
+			return_string[i] = '*';
 		}
 	}
-	char* return_string = strdup(ss.c_str());
 	return return_string;
 }
 
+void* characterize(char* num, vector<char*>& triplets) {
+	unsigned long int ctr = 0;
+	unsigned long long int l = strlen(num);
+	if (l <= 3) {
+		triplets.push_back(strdup(num));
+		return 0;
+	}
+	while (1) {
+		char* triplet = (char*) calloc(4, sizeof(char));
+		for (int i = ctr; i < ctr + 3; ++i) {
+			triplet[i-ctr] = num[i];
+		}
+		triplets.push_back(triplet);
+		if ((ctr + 3) == l) {
+			break;
+		}
+		ctr++;
+	}
+	return 0;
+}
+
 int main(int argc, char* argv[]) {
-	char* num = strdup(argv[1]);
-	char* rnum = strrev(num);
-	char* decimal_factor1 = 0;
-	char* decimal_factor2 = 0;
-	std::string binary_factor1 = "";
-	std::string binary_factor2 = "";
+	num = strdup(argv[1]);
+	vector<char*> triplets;
+	characterize(num, triplets);
 	struct arg* arg1 = (struct arg*) calloc(1, sizeof(struct arg));
 	struct arg* arg2 = (struct arg*) calloc(1, sizeof(struct arg));
-	arg1->num = num;
-	arg2->num = rnum;
 	arg1->t = 0;
 	arg2->t = 1;
 	pthread_t thread_id1, thread_id2;
-	bool success = false;
-	while (1) {
+	unsigned long long int ctr = 0;
+	unsigned long long int sz = triplets.size();
+	while (ctr < sz) {
+		arg2->num = arg1->num = triplets[ctr];
 		arg1->offset = offset;
 		arg2->offset = offset;
 		char* ret1 = 0, *ret2 = 0;
@@ -127,26 +151,37 @@ int main(int argc, char* argv[]) {
 		pthread_create(&thread_id2, NULL, factorize, arg2);
 		pthread_join(thread_id1, (void**) &ret1);
 		pthread_join(thread_id2, (void**) &ret2);
-                char* binary_snippet1 = (char*) ret1;
-		char* binary_snippet2 = (char*) ret2;
-		if (binary_snippet1 && strlen(binary_snippet1) > 0) {
-			binary_factor1 += binary_snippet1;
+		int zero_count1 = 0, one_count1 = 0;
+		int zero_count2 = 0, one_count2 = 0;
+		for (int i = 0; i < MAGIC / 2; ++i ) {
+			if (ret1[i] == '1') {
+				one_count1++;
+			} else if (ret1[i] == '0') {
+				zero_count1++;
+			}
+			if (ret2[i] == '1') {
+				one_count1++;
+			} else if (ret2[i] == '0') {
+				zero_count1++;
+			}
 		}
-		if (binary_snippet2 && strlen(binary_snippet2) > 0) {
-			binary_factor2 += strrev(binary_snippet2);
+		for (int i = MAGIC / 2; i < MAGIC; ++i) {
+			if (ret1[i] == '1') {
+				one_count2++;
+			} else if (ret1[i] == '0') {
+				zero_count2++;
+			}
+			if (ret2[i] == '1') {
+				one_count2++;
+			} else if (ret2[i] == '0') {
+				zero_count2++;
+			}
 		}
-		decimal_factor1 = _int_(binary_factor1);
-		decimal_factor2 = _int_(binary_factor2);
-	        char* _product_ = productOf(decimal_factor1, decimal_factor2);
-		int result = _equals_(num, _product_);
-		if (result == 0) {
-			success = true;
-			break;
-		} else if (result > 0) {
-			success = false;
-			break;
-		} 
+		cout << "[ 1: " << one_count1 << " , 0: " << zero_count1 << " ]\t[ 0: " << zero_count2 << ", 1: " << one_count2 << " ] ; " << endl;
+                free(ret1);
+		free(ret2);
 		offset += MAGIC;
+		++ctr;
 	}
 	free(arg1);
 	free(arg2);
