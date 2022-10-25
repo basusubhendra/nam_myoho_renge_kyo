@@ -11,15 +11,10 @@
 */
 using namespace std;
 using namespace boost;
-#define MAGIC 18
 unsigned long long int offset = 0;
 char* num = 0;
 char* rnum = 0;
-struct arg {
-	char* num;
-	int t;
-	unsigned long long int offset;
-};
+#define MAGIC 18
 
 char* strrev(char* x) {
 	char* y = strdup(x);
@@ -85,12 +80,45 @@ char* _int_(std::string x) {
 	return _prod_;
 }
 
-void* factorize(void* _arg_) {
+char* factorize(char* num, char* rnum, int* repeat_vector, const char* pp, int pk, int t) {
 }
 
 int main(int argc, char* argv[]) {
 	num = strdup(argv[1]);
-	rnum = strrev(num);
+	std::string reverse_binary_factor_e = "";
+	std::string binary_factor_pi = "";
+	FILE* fp = fopen64("./pi.txt","r");
+        FILE* fe = fopen64("./e.txt","r");
+	unsigned long long int l = strlen(num);
+	int t = 0;
+	int repeat_vector[4] = { 1, 3, 2, 1 };
+	while (1) {
+		if (offset > l) {
+			num = num + offset;
+			rnum = strrev(num);
+		} else {
+			cout << num << " is a prime..." << endl;
+			exit(0);
+		}
+		for (int i = 0; i < 4; ++i) {
+			char pp[3], ee[3];
+			fscanf(fp, "%2s", pp);
+			fscanf(fe, "%2s", ee);
+			pp[2] = ee[2] = '\0';
+			int pk = -1, ek = -1;
+			if (t == 0) {
+				pk = atoi(strrev(pp));
+				ek = atoi(ee);
+			} else {
+				pk = atoi(pp);
+				ek = atoi(strrev(ee));
+			}
+			char* binary_ee = factorize(num, rnum, repeat_vector[i % 4], e, pk, t);
+			char* binary_pp = factorize(num, rnum, repeat_vector[i % 4], pi, ek, 1 - t);
+			t = 1 - t;
+		}
+                offset += MAGIC;
+	}
 	return 0;
 }
 
