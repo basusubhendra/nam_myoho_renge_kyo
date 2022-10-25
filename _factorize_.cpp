@@ -4,6 +4,9 @@
 #include <string.h>
 #include <iostream>
 #include <gmp.h>
+#include <pthread.h>
+#include "pi.hpp"
+#include "e.hpp"
 /*
 #include <sys/types.h>
 #include <unistd.h>
@@ -14,7 +17,6 @@ using namespace boost;
 unsigned long long int offset = 0;
 char* num = 0;
 char* rnum = 0;
-#define MAGIC 18
 
 char* strrev(char* x) {
 	char* y = strdup(x);
@@ -80,7 +82,24 @@ char* _int_(std::string x) {
 	return _prod_;
 }
 
-char* factorize(char* num, char* rnum, int* repeat_vector, const char* pp, int pk, int t) {
+bool factorize(char* num, char* rnum, const char* pp, int pk, int repeat, int t) {
+	char* ss = (char*) calloc(pk + repeat + 1, sizeof(char));
+	strncpy(ss, pp, pk + repeat);
+	ss[pk + repeat + 1] = '\0';
+	char* _num_ = 0;
+	if (t == 0) {
+		_num_ = num;
+	} else {
+		_num_ = rnum;
+	}
+	for ( int i = pk; i < pk + repeat; ++i) {
+		if (ss[i] == _num_[i]) {
+			free(ss);
+			return true;
+		}
+	}
+	free(ss);
+	return false;
 }
 
 int main(int argc, char* argv[]) {
@@ -92,6 +111,7 @@ int main(int argc, char* argv[]) {
 	unsigned long long int l = strlen(num);
 	int t = 0;
 	int repeat_vector[4] = { 1, 3, 2, 1 };
+	unsigned long long int counter = 0;
 	while (1) {
 		if (offset > l) {
 			num = num + offset;
@@ -113,11 +133,12 @@ int main(int argc, char* argv[]) {
 				pk = atoi(pp);
 				ek = atoi(strrev(ee));
 			}
-			char* binary_ee = factorize(num, rnum, repeat_vector[i % 4], e, pk, t);
-			char* binary_pp = factorize(num, rnum, repeat_vector[i % 4], pi, ek, 1 - t);
+			bool bool_pp = factorize(num, rnum, e, pk, repeat_vector[i % 4], t);
+			bool bool_ee = factorize(num, rnum, pi, ek, repeat_vector[i % 4], 1 - t);
 			t = 1 - t;
+			++counter;
 		}
-                offset += MAGIC;
+                offset += 2;
 	}
 	return 0;
 }
