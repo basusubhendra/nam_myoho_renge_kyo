@@ -151,33 +151,24 @@ int main(int argc, char* argv[]) {
 		pthread_create(&thread_id2, NULL, factorize, arg2);
 		pthread_join(thread_id1, (void**) &ret1);
 		pthread_join(thread_id2, (void**) &ret2);
-		int zero_count1 = 0, one_count1 = 0;
-		int zero_count2 = 0, one_count2 = 0;
-		for (int i = 0; i < MAGIC / 2; ++i ) {
-			if (ret1[i] == '1') {
-				one_count1++;
-			} else if (ret1[i] == '0') {
-				zero_count1++;
-			}
-			if (ret2[i] == '1') {
-				one_count1++;
-			} else if (ret2[i] == '0') {
-				zero_count1++;
+		cout << "ret1: " ;
+		for (int i = 0; i < MAGIC; ++i ) {
+			if (ret1[i] != '*') {
+				cout << ret1[i]  << " , ";
+			} else {
+				cout  << "  , " ;
 			}
 		}
-		for (int i = MAGIC / 2; i < MAGIC; ++i) {
-			if (ret1[i] == '1') {
-				one_count2++;
-			} else if (ret1[i] == '0') {
-				zero_count2++;
-			}
-			if (ret2[i] == '1') {
-				one_count2++;
-			} else if (ret2[i] == '0') {
-				zero_count2++;
+		cout << endl;
+		cout << "ret2: " ;
+		for (int i = 0; i < MAGIC; ++i ) {
+			if (ret2[i] != '*') {
+				cout << ret2[i] << " , ";
+			} else {
+				cout << "  , ";
 			}
 		}
-		cout << "[ 1: " << one_count1 << " , 0: " << zero_count1 << " ]\t[ 0: " << zero_count2 << ", 1: " << one_count2 << " ] ; " << endl;
+		cout << endl;
                 free(ret1);
 		free(ret2);
 		offset += MAGIC;
