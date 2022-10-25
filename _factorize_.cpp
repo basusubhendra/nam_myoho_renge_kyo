@@ -5,6 +5,7 @@
 #include <iostream>
 #include <gmp.h>
 #include <pthread.h>
+#include <algorithm>
 #include "pi.hpp"
 #include "e.hpp"
 /*
@@ -46,7 +47,7 @@ char* productOf(char* x, char* y) {
 	return _product_;
 }
 
-int _equals_(char* x, char* y) {
+int _compare_(char* x, char* y) {
 	mpz_t xz;
 	mpz_init(xz);
 	mpz_set_str(xz, x, 10);
@@ -103,16 +104,29 @@ bool factorize(char* num, char* rnum, const char* pp, int pk, int repeat, int t)
 	return false;
 }
 
+char* _bin_(unsigned long long int x) {
+	std::string binary_string = "";
+	while (x > 0) {
+		int r = x % 2;
+		binary_string += boost::lexical_cast<std::string>(r);
+		x /= 2;
+	}
+	std::reverse(binary_string.begin(), binary_string.end());
+	return strdup(binary_string.c_str());
+}
+
 int main(int argc, char* argv[]) {
 	num = strdup(argv[1]);
-	std::string reverse_binary_factor_e = "";
-	std::string binary_factor_pi = "";
 	FILE* fp = fopen64("./pi.txt","r");
         FILE* fe = fopen64("./e.txt","r");
 	int t = 0;
 	int repeat_vector[4] = { 1, 3, 2, 1 };
 	unsigned long long int counter = 0;
 	char* _num_ = strdup(num);
+	unsigned long long int interval_pi = 0;
+	unsigned long long int interval_e = 0;
+	std::string binary_factor_pi = "";
+	std::string binary_factor_e = "";
 	while (1) {
 		unsigned long long int l = strlen(num);
 		num = num + (MAGIC % l);
@@ -138,6 +152,36 @@ int main(int argc, char* argv[]) {
 			}
 			bool bool_pp = factorize(num, rnum, e, pk, repeat_vector[i % 4], t);
 			bool bool_ee = factorize(num, rnum, pi, ek, repeat_vector[i % 4], 1 - t);
+			bool success = false;
+			if (bool_pp) {
+			     binary_factor_pi += ((t == 0)? _bin_(interval_pi):strrev(_bin_(interval_pi)));
+                             interval_pi = 1;
+			     success = true;
+			} else {
+			     ++interval_pi;
+			}
+			if (bool_ee) {
+			     binary_factor_e += ((t == 0)? _bin_(interval_e):strrev(_bin_(interval_e)));
+			     interval_e = 1;
+			     success = true;
+			} else {
+			     ++interval_e;
+			}
+                        if (success) {
+				std::string _binary_factor_e_ = binary_factor_e;
+				std::reverse(_binary_factor_e_.begin(), _binary_factor_e_.end());
+				char* decimal_factor_pi = _int_(binary_factor_pi);
+				char* decimal_factor_e = _int_(_binary_factor_e_);
+				char* product = productOf(decimal_factor_pi, decimal_factor_e);
+				int result = _compare_(_num_, product);
+				if (result < 0) {
+					cout << num << " is a prime." << endl;
+					break;
+				} else if (result == 0) {
+					cout << num << " = " << decimal_factor_pi << " X " << decimal_factor_e << endl;
+					break;
+				} 
+			}
 			t = 1 - t;
 			++counter;
 		}
