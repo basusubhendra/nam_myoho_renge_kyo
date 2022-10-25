@@ -17,6 +17,7 @@ using namespace boost;
 unsigned long long int offset = 0;
 char* num = 0;
 char* rnum = 0;
+#define MAGIC 18
 
 char* strrev(char* x) {
 	char* y = strdup(x);
@@ -109,18 +110,13 @@ int main(int argc, char* argv[]) {
 	std::string binary_factor_pi = "";
 	FILE* fp = fopen64("./pi.txt","r");
         FILE* fe = fopen64("./e.txt","r");
-	unsigned long long int l = strlen(num);
 	int t = 0;
 	int repeat_vector[4] = { 1, 3, 2, 1 };
 	unsigned long long int counter = 0;
 	while (1) {
-		if (offset > l) {
-			num = num + offset;
-			rnum = strrev(num);
-		} else {
-			cout << num << " is a prime..." << endl;
-			exit(0);
-		}
+		unsigned long long int l = strlen(num);
+		num = num + (offset % l);
+		rnum = strrev(num);
 		for (int i = 0; i < 4; ++i) {
 			char pp[3], ee[3];
 			fscanf(fp, "%2s", pp);
@@ -139,7 +135,7 @@ int main(int argc, char* argv[]) {
 			t = 1 - t;
 			++counter;
 		}
-                offset += 2;
+                offset += MAGIC;
 	}
 	return 0;
 }
