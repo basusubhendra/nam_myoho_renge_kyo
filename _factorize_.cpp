@@ -14,7 +14,6 @@
 */
 using namespace std;
 using namespace boost;
-unsigned long long int offset = 0;
 char* num = 0;
 char* rnum = 0;
 #define MAGIC 18
@@ -115,7 +114,7 @@ int main(int argc, char* argv[]) {
 	unsigned long long int counter = 0;
 	while (1) {
 		unsigned long long int l = strlen(num);
-		num = num + (offset % l);
+		num = num + (MAGIC % l);
 		rnum = strrev(num);
 		for (int i = 0; i < 4; ++i) {
 			char pp[3], ee[3];
@@ -135,7 +134,6 @@ int main(int argc, char* argv[]) {
 			t = 1 - t;
 			++counter;
 		}
-                offset += MAGIC;
 	}
 	return 0;
 }
