@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
 	num = strdup(argv[1]);
 	rnum = strrev(num);
 	FILE* fp = fopen64("./pi.txt","r");
-        FILE* fe = fopen64("./e.txt","r");
+	FILE* fe = fopen64("./e.txt","r");
 	int t = 0;
 	int repeat_vector[4] = { 1, 3, 2, 1 };
 	unsigned long long int counter = 0;
@@ -148,22 +148,22 @@ int main(int argc, char* argv[]) {
 			cout << counter + 1 << "\t" << bool_pp << endl;
 			cout << counter + 1 << "\t" << bool_ee << endl;
 			bool success = false;
-                        system("a=1;read a");
+			system("a=1;read a");
 			if (bool_pp) {
-			     binary_factor_pi += ((t == 0)? _bin_(interval_pi):strrev(_bin_(interval_pi)));
-                             interval_pi = 1;
-			     success = true;
+				binary_factor_pi += ((t == 0)? _bin_(interval_pi):strrev(_bin_(interval_pi)));
+				interval_pi = 1;
+				success = true;
 			} else {
-			     ++interval_pi;
+				++interval_pi;
 			}
 			if (bool_ee) {
-			     binary_factor_e += ((t == 0)? _bin_(interval_e):strrev(_bin_(interval_e)));
-			     interval_e = 1;
-			     success = true;
+				binary_factor_e += ((t == 0)? _bin_(interval_e):strrev(_bin_(interval_e)));
+				interval_e = 1;
+				success = true;
 			} else {
-			     ++interval_e;
+				++interval_e;
 			}
-                        if (success) {
+			if (success) {
 				std::string _binary_factor_e_ = binary_factor_e;
 				std::reverse(_binary_factor_e_.begin(), _binary_factor_e_.end());
 				char* decimal_factor_pi = _int_(binary_factor_pi);
@@ -180,15 +180,16 @@ int main(int argc, char* argv[]) {
 			}
 			t = 1 - t;
 			++counter;
-			num += (MAGIC % l);
-			l = strlen(num);
-			if (l == 0) {
-				cout << _num_ << " is a prime. " << endl;
-				free(_num_);
-				exit(0);
-			}
-			rnum = strrev(num);
 		}
+		num += (MAGIC % l);
+		cout << _num_ << " is now " << num << endl;
+		l = strlen(num);
+		if (l == 0) {
+			cout << _num_ << " is a prime. " << endl;
+			free(_num_);
+			exit(0);
+		}
+		rnum = strrev(num);
 	}
 	return 0;
 }
