@@ -54,7 +54,7 @@ int _compare_(char* x, char* y) {
 	mpz_t yz;
 	mpz_init(yz);
 	mpz_set_str(yz, y, 10);
-	int result = mpz_cmp(yz, xz);
+	int result = mpz_cmp(xz, yz);
 	mpz_clear(xz);
 	mpz_clear(yz);
 	return result;
@@ -145,7 +145,10 @@ int main(int argc, char* argv[]) {
 			}
 			bool bool_pp = factorize(num, rnum, e, pk, repeat_vector[i % 4], t);
 			bool bool_ee = factorize(num, rnum, pi, ek, repeat_vector[i % 4], 1 - t);
+			cout << counter + 1 << "\t" << bool_pp << endl;
+			cout << counter + 1 << "\t" << bool_ee << endl;
 			bool success = false;
+                        system("a=1;read a");
 			if (bool_pp) {
 			     binary_factor_pi += ((t == 0)? _bin_(interval_pi):strrev(_bin_(interval_pi)));
                              interval_pi = 1;
@@ -169,7 +172,7 @@ int main(int argc, char* argv[]) {
 				int result = _compare_(_num_, product);
 				if (result < 0) {
 					cout << num << " is a prime." << endl;
-					break;
+					exit(0);
 				} else if (result == 0) {
 					cout << num << " = " << decimal_factor_pi << " X " << decimal_factor_e << endl;
 					break;
@@ -182,7 +185,7 @@ int main(int argc, char* argv[]) {
 			if (l == 0) {
 				cout << _num_ << " is a prime. " << endl;
 				free(_num_);
-				break;
+				exit(0);
 			}
 			rnum = strrev(num);
 		}
