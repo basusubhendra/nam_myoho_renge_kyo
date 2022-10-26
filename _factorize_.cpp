@@ -117,6 +117,7 @@ char* _bin_(unsigned long long int x) {
 
 int main(int argc, char* argv[]) {
 	num = strdup(argv[1]);
+	rnum = strrev(num);
 	FILE* fp = fopen64("./pi.txt","r");
         FILE* fe = fopen64("./e.txt","r");
 	int t = 0;
@@ -127,16 +128,8 @@ int main(int argc, char* argv[]) {
 	unsigned long long int interval_e = 0;
 	std::string binary_factor_pi = "";
 	std::string binary_factor_e = "";
+	unsigned long long int l = strlen(num);
 	while (1) {
-		unsigned long long int l = strlen(num);
-		num = num + (MAGIC % l);
-		l = strlen(num);
-		if (l == 0) {
-			cout << _num_ << " is a prime. " << endl;
-			free(_num_);
-			break;
-		}
-		rnum = strrev(num);
 		for (int i = 0; i < 4; ++i) {
 			char pp[3], ee[3];
 			fscanf(fp, "%2s", pp);
@@ -184,6 +177,14 @@ int main(int argc, char* argv[]) {
 			}
 			t = 1 - t;
 			++counter;
+			num += (MAGIC % l);
+			l = strlen(num);
+			if (l == 0) {
+				cout << _num_ << " is a prime. " << endl;
+				free(_num_);
+				break;
+			}
+			rnum = strrev(num);
 		}
 	}
 	return 0;
