@@ -83,23 +83,35 @@ char* _int_(std::string x) {
 	return _prod_;
 }
 
-bool factorize(char* num, char* rnum, const char* pp, int pk, int repeat, int t) {
+bool factorize(char* num, char* rnum, int param, int pk, int repeat, int t) {
 	char* ss = (char*) calloc(pk + repeat + 1, sizeof(char));
-	strncpy(ss, pp, pk + repeat);
-	ss[pk + repeat + 1] = '\0';
+	ss[pk + repeat] = '\0';
 	char* _num_ = 0;
-	if (t == 0) {
+	if (param == 0 && t == 0) {
+		strncpy(ss, pi, pk + repeat);
 		_num_ = num;
-	} else {
+	} else if (param == 0 && t == 1) {
+		strncpy(ss, pi, pk + repeat);
+		_num_ = rnum;
+	} else if (param == 1 && t == 0) {
+		strncpy(ss, e, pk + repeat);
+		_num_ = num;
+	} else if (param == 1 && t == 1) {
+		strncpy(ss, e, pk + repeat);
 		_num_ = rnum;
 	}
+	cout << _num_ << endl;
+	cout << ss << endl;
 	unsigned long long int l = strlen(_num_);
 	for ( int i = pk; i < pk + repeat; ++i) {
+	cout << ss[i]  << "\t\t"  << _num_[i % l] << "\t\t" << i % l << endl;
 		if (ss[i] == _num_[i % l]) {
 			free(ss);
 			return true;
 		}
 	}
+	cout << endl;
+	system("a=1;read a");
 	free(ss);
 	return false;
 }
@@ -143,10 +155,10 @@ int main(int argc, char* argv[]) {
 				pk = atoi(pp);
 				ek = atoi(strrev(ee));
 			}
-			bool bool_pp = factorize(num, rnum, e, pk, repeat_vector[i % 4], t);
-			bool bool_ee = factorize(num, rnum, pi, ek, repeat_vector[i % 4], 1 - t);
-			cout << counter + 1 << "\t" << bool_pp << endl;
-			cout << counter + 1 << "\t" << bool_ee << endl;
+			bool bool_pp = factorize(num, rnum, 1, pk, repeat_vector[i % 4], t);
+			bool bool_ee = factorize(num, rnum, 0, ek, repeat_vector[i % 4], 1 - t);
+			cout << counter + 1 << "\t" << bool_pp << "\t" << pk << endl;
+			cout << counter + 1 << "\t" << bool_ee << "\t" << ek <<  endl;
 			bool success = false;
 			system("a=1;read a");
 			if (bool_pp) {
